@@ -1,0 +1,17 @@
+{
+  "name": "piiquante-back-end",
+  "version": "1.0.0",
+  "description": "Back-End du projet 6: Piiquante",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

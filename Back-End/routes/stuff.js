@@ -19,6 +19,6 @@ router.delete("/:id", auth, stuffControllers.deleteThing);
 router.get("/:id", auth, stuffControllers.getOneThing);
 
 // pour trouver tous les objets
-router.get("/", auth, stuffControllers.getAllThings);
+router.get("/", stuffControllers.getAllThings);
 
 module.exports = router;

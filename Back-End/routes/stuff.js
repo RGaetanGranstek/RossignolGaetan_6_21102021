@@ -3,20 +3,22 @@ const express = require("express");
 const router = express.Router();
 // importation du controllers
 const stuffControllers = require("../controllers/stuff");
+// importation du auth (login)
+const auth = require("../middleware/auth");
 
-// logique de création d'objet
-router.post("/", stuffControllers.createThing);
+// logique de création d'objet + protection d'une route (auth)
+router.post("/", auth, stuffControllers.createThing);
 
 // modifier un objet existant dans la base de donnée
-router.put("/:id", stuffControllers.modifyThing);
+router.put("/:id", auth, stuffControllers.modifyThing);
 
 // supprimer un objet existant dans la base de donnée
-router.delete("/:id", stuffControllers.deleteThing);
+router.delete("/:id", auth, stuffControllers.deleteThing);
 
 // :id <= parti de la route dynamique pour une recherche à l'unité dans la base de donnée
-router.get("/:id", stuffControllers.getOneThing);
+router.get("/:id", auth, stuffControllers.getOneThing);
 
 // pour trouver tous les objets
-router.get("/", stuffControllers.getAllThings);
+router.get("/", auth, stuffControllers.getAllThings);
 
 module.exports = router;

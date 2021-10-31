@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 // importation du routeur
 const stuffRoutes = require("./routes/stuff");
+// importation du routeur login
+const userRoutes = require("./routes/user");
 
 // Permet de se relier à la base de donnée MongoDB atlas
 mongoose
@@ -39,7 +41,9 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 // mise en place du début de la route et pour cette route ont utilise le routeur stuffRoutes
-app.use(".api/sauces", stuffRoutes);
+app.use("/api/sauces", stuffRoutes);
+// mise en place route pour l'authentification
+app.use("/api/auth", userRoutes);
 
 // // middleware, fonction dans l'application qui recoit requête et réponse qui les géres et passe avec next à un prochain middleware
 // app.use((req, res, next) => {

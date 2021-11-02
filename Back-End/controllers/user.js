@@ -31,7 +31,7 @@ exports.login = (req, res, next) => {
   // ont récupère l'utilisateur dans la base de donnée qui correspond à l'adresse email entrée par l'utilisateur
   User.findOne({ email: req.body.email })
     .then((user) => {
-      // si ont ne trouve pas de correspondance ont renvoi une erreure
+      // si ont ne trouve pas de correspondance ont renvoi une erreur
       if (!user) {
         return res.status(401).json({ error: "Utilisateur non trouvé !" });
       }

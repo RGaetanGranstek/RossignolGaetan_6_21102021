@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 // importation de Mongoose qui facilite les interactions avec notre base de données MongoDB
 const mongoose = require("mongoose");
 // importation du routeur
-const stuffRoutes = require("./routes/stuff");
+const sauceRoutes = require("./routes/Sauce");
 // importation du routeur login
 const userRoutes = require("./routes/user");
 // importation de node qui donne accés au chemin du système de fichier
@@ -44,8 +44,8 @@ app.use(bodyParser.json());
 
 // route des images
 app.use("/images", express.static(path.join(__dirname, "images")));
-// mise en place du début de la route et pour cette route ont utilise le routeur stuffRoutes
-app.use("/api/sauces", stuffRoutes);
+// mise en place du début de la route et pour cette route ont utilise le routeur sauceRoutes
+app.use("/api/sauces", sauceRoutes);
 // mise en place route pour l'authentification
 app.use("/api/auth", userRoutes);
 

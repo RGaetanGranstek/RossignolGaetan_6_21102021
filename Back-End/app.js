@@ -8,6 +8,8 @@ const mongoose = require("mongoose");
 const stuffRoutes = require("./routes/stuff");
 // importation du routeur login
 const userRoutes = require("./routes/user");
+// importation de node qui donne accés au chemin du système de fichier
+const path = require("path");
 
 // Permet de se relier à la base de donnée MongoDB atlas
 mongoose
@@ -40,6 +42,8 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
+// route des images
+app.use("/images", express.static(path.join(__dirname, "images")));
 // mise en place du début de la route et pour cette route ont utilise le routeur stuffRoutes
 app.use("/api/sauces", stuffRoutes);
 // mise en place route pour l'authentification

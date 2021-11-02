@@ -1,15 +1,23 @@
 // importation du modele
 const Thing = require("../models/Thing");
+// importation de fs de node pour file system pour avoir accés aux différentes opérations du système de fichier
+const fs = require("fs");
 
 // Ici la logique pour chaque fonction
 
 // Pour la création d'objet
 exports.createThing = (req, res, next) => {
+  // chaine de caractére sous forme javascript req.body.thing
+  const thingObject = JSON.parse(req.body.thing);
   // ont enléve l'id car mongoDB en génére un de lui même
-  delete req.body._id;
+  delete thingObject._id;
   const thing = new Thing({
     // permet de récupérer tous les champs du corp de la requête
-    ...req.body,
+    ...thingObject,
+    // ont génére une URL de l'image
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename
+    }`,
   });
   // save dans la base de donnée MongoDB
   thing
@@ -20,16 +28,40 @@ exports.createThing = (req, res, next) => {
 
 // modifier un objet existant dans la base de donnée
 exports.modifyThing = (req, res, next) => {
-  Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+  // permet de savoir si image existante ou si nouvelle
+  const thingObject = req.file
+    ? {
+        ...JSON.parse(req.body.thing),
+        // ont génére une URL de l'image
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      }
+    : { ...req.body }; // si il n'existe pas on fait une copie de req.body
+  Thing.updateOne(
+    { _id: req.params.id },
+    { ...thingObject, _id: req.params.id }
+  )
     .then(() => res.status(200).json({ message: "Objet modifié !" }))
     .catch((error) => res.status(400).json({ error }));
 };
 
 // supprimer un objet existant dans la base de donnée
 exports.deleteThing = (req, res, next) => {
-  Thing.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Objet supprimé !" }))
-    .catch((error) => res.status(400).json({ error }));
+  //ont trouve l'objet dans la base de donnée
+  Thing.findOne({ _id: req.params.id })
+    .then((thing) => {
+      // ont récupère le nom du fichier à supprimer
+      const filename = thing.imageUrl.split("/images/")[1];
+      // ont supprime l'objet
+      fs.unlink(`images/${filename}`, () => {
+        // ont renvoi une réponse si fonctionne ou non
+        Thing.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: "Objet supprimé !" }))
+          .catch((error) => res.status(400).json({ error }));
+      });
+    })
+    .catch((error) => res.status(500).json({ error }));
 };
 
 // :id <= parti de la route dynamique pour une recherche à l'unité dans la base de donnée

@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
   try {
     // récupérer le token dans le header authorization
     // [1] => ont récupère le 2éme élement du tableau en cas d'erreur ça renvoi vers le catch
-    const token = req.headers.authorization.spli(" ")[1];
+    const token = req.headers.authorization.split(" ")[1];
     // ont décode le token avec la clé secréte en cas d'erreur ça renvoi vers le catch
     const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
     // ont récupére le userId récupérer dans le token et ont le compare avec celui dans la requéte

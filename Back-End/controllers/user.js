@@ -51,12 +51,12 @@ exports.login = (req, res, next) => {
               { userId: user._id },
               // clé secrete pour l'encodage
               "RANDOM_TOKEN_SECRET",
-              // argumlent de configuration (expiration 24H)
+              // argument de configuration (expiration 24H)
               { expiresIn: "24h" }
             ),
           });
         })
-        .catch();
+        .catch((error) => res.status(500).json({ error }));
     })
     .catch((error) => res.status(500).json({ error }));
 };

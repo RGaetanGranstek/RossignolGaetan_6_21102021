@@ -94,25 +94,26 @@ exports.likeDislikeSauce = (req, res, next) => {
     { $inc: { likes: -1 }, $pull: { usersLiked: userId } }
   )
     .then(() => {
-      res.status(201).json({
+      return res.status(201).json({
         message: `Le vote pour la sauce ${Sauce.name} n'est plus pris en compte`,
       });
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => {
+      return res.status(500).json({ error });
+    });
   switch (like) {
     case 0:
       Sauce.findOne({ _id: id })
         .then((sauce) => {
           if (sauce.usersLiked.includes(userId)) {
             unLike;
-          }
-        })
-        .then((sauce) => {
-          if (sauce.usersDisliked.includes(userId)) {
+          } else if (sauce.usersDisliked.includes(userId)) {
             unLike;
           }
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => {
+          return res.status(500).json({ error });
+        });
       break;
     // L'utilisateur aime la sauce
     case 1:

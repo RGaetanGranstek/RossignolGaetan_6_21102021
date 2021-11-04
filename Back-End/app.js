@@ -10,6 +10,10 @@ const sauceRoutes = require("./routes/Sauce");
 const userRoutes = require("./routes/user");
 // importation de node qui donne accés au chemin du système de fichier
 const path = require("path");
+// Importation de mongo sanitize
+const mongoSanitize = require("express-mongo-sanitize");
+// Importation de xss clean
+const xssClean = require("xss-clean");
 
 // Permet de se relier à la base de donnée MongoDB atlas
 mongoose
@@ -40,7 +44,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Transforme les données arrivant des requêtes POST en objet JSON
 app.use(bodyParser.json());
+// Middleware Express 4.x qui nettoie les données fournies par l’utilisateur pour empêcher l’injection de l’opérateur MongoDB
+app.use(mongoSanitize());
+// Connectez le middleware pour nettoyer les entrées utilisateur provenant du corps POST, des requêtes GET et des paramètres d’URL, Protection contre les attaques XSS
+app.use(xssClean());
 
 // route des images
 app.use("/images", express.static(path.join(__dirname, "images")));

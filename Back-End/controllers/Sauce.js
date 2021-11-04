@@ -79,3 +79,66 @@ exports.getAllSauces = (req, res, next) => {
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
 };
+
+//Incrémentation des likes et dislikes utilisateur pour les sauces
+exports.likeDislikeSauce = (req, res, next) => {
+  if (req.body.like === undefined || req.body.userId === undefined) {
+    return res.status(400).json({ message: "Bad request !" });
+  }
+  const id = req.params.id;
+  const like = req.body.like;
+  const userId = req.body.userId;
+  const unLike = Sauce.updateOne(
+    { _id: id },
+    // Décrémentation d'un like et d'un utilisateur
+    { $inc: { likes: -1 }, $pull: { usersLiked: userId } }
+  )
+    .then(() => {
+      res.status(201).json({
+        message: `Le vote pour la sauce ${Sauce.name} n'est plus pris en compte`,
+      });
+    })
+    .catch((error) => res.status(500).json({ error }));
+  switch (like) {
+    case 0:
+      Sauce.findOne({ _id: id })
+        .then((sauce) => {
+          if (sauce.usersLiked.includes(userId)) {
+            unLike;
+          }
+        })
+        .then((sauce) => {
+          if (sauce.usersDisliked.includes(userId)) {
+            unLike;
+          }
+        })
+        .catch((error) => res.status(500).json({ error }));
+      break;
+    // L'utilisateur aime la sauce
+    case 1:
+      Sauce.updateOne(
+        { _id: id },
+        // Incrémentation d'un like et d'un utilisateur
+        { $inc: { likes: 1 }, $push: { usersLiked: userId } }
+      )
+        .then(() =>
+          res.status(201).json({ message: `Vous aimez ${Sauce.name}` })
+        )
+        .catch((error) => res.status(500).json({ error }));
+      break;
+    // L'utilisateur n'aime pas la sauce
+    case -1:
+      Sauce.updateOne(
+        { _id: id },
+        // Incrémentation d'un like et d'un utilisateur
+        { $inc: { dislikes: 1 }, $push: { usersDisliked: userId } }
+      )
+        .then(() =>
+          res.status(201).json({ message: `Vous n'aimez pas ${Sauce.name}` })
+        )
+        .catch((error) => res.status(500).json({ error }));
+      break;
+    default:
+      return res.status(400).json({ message: "Bad request" });
+  }
+};

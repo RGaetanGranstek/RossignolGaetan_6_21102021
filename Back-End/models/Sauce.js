@@ -10,11 +10,11 @@ const sauceSchema = mongoose.Schema({
   mainPepper: { type: String, required: true },
   imageUrl: { type: String, required: true },
   heat: { type: Number, required: true },
-  likes: { type: Number, required: false },
-  dislikes: { type: Number, required: false },
+  likes: { type: Number, required: false, default: 0 },
+  dislikes: { type: Number, required: false, default: 0 },
   // [ "String <userId>" ] à mettre en place ******************** pour usersLiked et usersDisliked
-  usersLiked: { type: ["String <userId>"], required: false },
-  usersDisliked: { type: ["String <userId>"], required: false },
+  usersLiked: { type: [String], required: false, defaultValue: [] },
+  usersDisliked: { type: [String], required: false, defaultValue: [] },
 });
 
 // ont exporte le modele de schéma

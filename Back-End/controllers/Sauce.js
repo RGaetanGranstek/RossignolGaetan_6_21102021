@@ -69,7 +69,7 @@ exports.getOneSauce = (req, res, next) => {
   // findOne pour trouver qu'un seul objet
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
-    .catch((error) => res.status(404).json({ error }));
+    .catch((error) => res.status(500).json({ error }));
 };
 
 exports.getAllSauces = (req, res, next) => {
@@ -77,7 +77,7 @@ exports.getAllSauces = (req, res, next) => {
   Sauce.find()
     // récupération du tableau de tous les sauces, et ont renvoi le tableau reçu par le Back-End (base de donnée)
     .then((sauces) => res.status(200).json(sauces))
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.status(500).json({ error }));
 };
 
 //Incrémentation des likes et dislikes utilisateur pour les sauces
@@ -88,27 +88,37 @@ exports.likeDislikeSauce = (req, res, next) => {
   const id = req.params.id;
   const like = req.body.like;
   const userId = req.body.userId;
-  const unLike = Sauce.updateOne(
-    { _id: id },
-    // Décrémentation d'un like et d'un utilisateur
-    { $inc: { likes: -1 }, $pull: { usersLiked: userId } }
-  )
-    .then(() => {
-      return res.status(201).json({
-        message: `Le vote pour la sauce ${Sauce.name} n'est plus pris en compte`,
-      });
-    })
-    .catch((error) => {
-      return res.status(500).json({ error });
-    });
+
   switch (like) {
+    // Décrémentation d'un like et d'un utilisateur
     case 0:
       Sauce.findOne({ _id: id })
         .then((sauce) => {
           if (sauce.usersLiked.includes(userId)) {
-            unLike;
-          } else if (sauce.usersDisliked.includes(userId)) {
-            unLike;
+            Sauce.updateOne(
+              { _id: id },
+              // Décrémentation d'un like et d'un utilisateur
+              { $inc: { likes: -1 }, $pull: { usersLiked: userId } }
+            )
+              .then(() => {
+                res.status(201).json({
+                  message: `Le vote pour la sauce: ${sauce.name} n'est plus pris en compte`,
+                });
+              })
+              .catch((error) => res.status(400).json({ error }));
+          }
+          if (sauce.usersDisliked.includes(userId)) {
+            Sauce.updateOne(
+              { _id: id },
+              // Décrémentation d'un like et d'un utilisateur
+              { $inc: { dislikes: -1 }, $pull: { usersDisliked: userId } }
+            )
+              .then(() => {
+                res.status(201).json({
+                  message: `Le vote pour la sauce: ${sauce.name} n'est plus pris en compte`,
+                });
+              })
+              .catch((error) => res.status(400).json({ error }));
           }
         })
         .catch((error) => {
@@ -123,7 +133,7 @@ exports.likeDislikeSauce = (req, res, next) => {
         { $inc: { likes: 1 }, $push: { usersLiked: userId } }
       )
         .then(() =>
-          res.status(201).json({ message: `Vous aimez ${Sauce.name}` })
+          res.status(201).json({ message: `Vous aimez cette sauce !` })
         )
         .catch((error) => res.status(500).json({ error }));
       break;
@@ -135,11 +145,9 @@ exports.likeDislikeSauce = (req, res, next) => {
         { $inc: { dislikes: 1 }, $push: { usersDisliked: userId } }
       )
         .then(() =>
-          res.status(201).json({ message: `Vous n'aimez pas ${Sauce.name}` })
+          res.status(201).json({ message: `Vous n'aimez pas cette sauce !` })
         )
         .catch((error) => res.status(500).json({ error }));
       break;
-    default:
-      return res.status(400).json({ message: "Bad request" });
   }
 };

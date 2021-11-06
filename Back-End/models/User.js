@@ -1,7 +1,7 @@
 // importation de mongoose
 const mongoose = require("mongoose");
 
-// ajout du validator pour notre Schema
+// ajout du validator unique pour notre Schema
 const uniqueValidator = require("mongoose-unique-validator");
 
 // création du schema

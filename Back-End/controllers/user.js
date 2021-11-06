@@ -1,8 +1,8 @@
 // model user
 const User = require("../models/User");
-// package cryptage des mots de passe
+// package cryptage des mots de passe (hashage)
 const bcrypt = require("bcrypt");
-// créationd de token et permet aussi de les vérifier
+// création de token et permet aussi de les vérifier
 const jwt = require("jsonwebtoken");
 
 // middleware signup pour l'enregistrement des new utilisateur en cryptant le mot de passe

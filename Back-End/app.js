@@ -14,6 +14,8 @@ const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize");
 // Importation de xss clean
 const xssClean = require("xss-clean");
+// importation de helmet pour la sécurisation des entêtes
+const helmet = require("helmet");
 
 // Permet de se relier à la base de donnée MongoDB atlas
 mongoose
@@ -44,6 +46,8 @@ app.use((req, res, next) => {
   next();
 });
 
+// applique les middleware d'helmet
+app.use(helmet());
 // Transforme les données arrivant des requêtes POST en objet JSON
 app.use(bodyParser.json());
 // Middleware Express 4.x qui nettoie les données fournies par l’utilisateur pour empêcher l’injection de l’opérateur MongoDB

@@ -6,6 +6,30 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 // maskdata est un module Node.js pour masquer différents types de données. Avec l’aide de maskdata, vous pouvez masquer l’e-mail, le numéro de téléphone, le numéro de carte, les champs JSON, le mot de passe, etc.
 const MaskData = require("maskdata");
+// mise en place d'un validateur de mot de passe + complexe
+const passwordValidator = require("password-validator");
+
+// Création d'un schema pour le mot de passe
+const schema = new passwordValidator();
+schema
+  .is()
+  .min(10) // longueur minimum 10
+  .is()
+  .max(100) // longueur maximum 100
+  .has()
+  .uppercase(1) // 1 majuscule minimum
+  .has()
+  .lowercase(1) // 1 minuscule minimum
+  .has()
+  .digits(2) // 2 chiffres minimum
+  .has()
+  .symbols(1) // 1 symbole minimum
+  .has()
+  .not()
+  .spaces() // aucun espace
+  .is()
+  .not()
+  .oneOf(["Passw0rd", "Password123"]); // Blacklist certain mdp défini
 
 // utilisation des options de maskdata pour cacher l'email
 const emailMask2Options = {
@@ -46,6 +70,13 @@ exports.login = (req, res, next) => {
       // si ont ne trouve pas de correspondance ont renvoi une erreur
       if (!user) {
         return res.status(401).json({ error: "Utilisateur non trouvé !" });
+      }
+      if (!schema.validate(req.body.password)) {
+        //Renvoie une erreur si le schema de mot de passe n'est pas respecté
+        return res.status(400).json({
+          message:
+            "Le mot de passe doit contenir au moins 10 caractères, une majuscule, une minuscule, 2 chiffres, un symbole ainsi qu'aucun espace.",
+        });
       }
       // ont compare le mot de passe entré avec le hash enregistré dans la base de donnée
       bcrypt

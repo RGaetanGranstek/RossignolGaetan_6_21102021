@@ -1,7 +1,5 @@
-// importation d'express
+// importation d'express et (body-parser pour rendre le corp de la requête exploitable en le transformant en objet javascript).
 const express = require("express");
-// importation de body-parser pour rendre le corp de la requête exploitable en le transformant en objet javascript.
-const bodyParser = require("body-parser");
 // importation de Mongoose qui facilite les interactions avec notre base de données MongoDB
 const mongoose = require("mongoose");
 // importation du routeur
@@ -48,8 +46,8 @@ app.use((req, res, next) => {
 
 // applique les middleware d'helmet
 app.use(helmet());
-// Transforme les données arrivant des requêtes POST en objet JSON
-app.use(bodyParser.json());
+// Transforme les données arrivant des requêtes POST en objet JSON (body-parser intégré à express)
+app.use(express.json());
 // Middleware Express 4.x qui nettoie les données fournies par l’utilisateur pour empêcher l’injection de l’opérateur MongoDB
 app.use(mongoSanitize());
 // Connectez le middleware pour nettoyer les entrées utilisateur provenant du corps POST, des requêtes GET et des paramètres d’URL, Protection contre les attaques XSS

@@ -88,6 +88,7 @@ exports.likeDislikeSauce = (req, res, next) => {
   const id = req.params.id;
   const like = req.body.like;
   const userId = req.body.userId;
+  console.log(req.body);
 
   switch (like) {
     // Décrémentation d'un like et d'un utilisateur
